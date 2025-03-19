@@ -9,12 +9,13 @@ datasource db {
 
 //Student Table
 model Student {
-  id           String    @id @default(cuid())
-  name         String
-  dateOfBirth  String
-  aadharNumber String    @unique
-  proctor      Professor @relation(fields: [proctorId], references: [id])
-  proctorId    String
+  id                String             @id @default(cuid())
+  name              String
+  dateOfBirth       String
+  aadharNumber      String             @unique
+  proctor           Professor          @relation(fields: [proctorId], references: [id])
+  proctorId         String
+  LibraryMembership LibraryMembership?
 }
 
 //Professor table
@@ -32,4 +33,13 @@ enum Seniority {
   SENIOR
   ASSOCIATE
   HEAD
+}
+
+//LibraryMembership Table
+model LibraryMembership {
+  id         String  @id @default(cuid())
+  studentId  String  @unique
+  StudentID  Student @relation(fields: [studentId], references: [id])
+  issueDate  String
+  expiryDate String
 }
