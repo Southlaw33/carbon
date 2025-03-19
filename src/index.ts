@@ -58,7 +58,6 @@ app.post("/students", async (c) => {
         name,
         dateOfBirth,
         aadharNumber,
-        
       },
     });
     return c.json(student, 201);
@@ -174,12 +173,85 @@ app.patch("/professors/:professorId", async (c) => {
 });
 
 //Delete student by his studentId
-// app.delete("/students/:studentId", async (c) => {
-//   const { studentId } = c.req.param();
-//   try {
-//     const sid = 
+app.delete("/students/:studentId", async (c) => {
+  const { studentId } = c.req.param();
+  try {
+    const sId = await prisma.student.findUnique({
+      where: {
+        id: studentId,
+      },
+    });
+    if (!sId) {
+      return c.json({ message: "Bad Request" }, 400);
+    }
+    const student = await prisma.student.delete({
+      where: {
+        id: studentId,
+      },
+    });
+    return c.json(student, 200);
+  } catch (e) {
+    console.log(e);
+  }
+});
 
+//Delete professor by his professorId
+app.delete("/professors/:professorId", async (c) => {
+  const { professorId } = c.req.param();
+  try {
+    const profId = await prisma.professor.findUnique({
+      where: {
+        id: professorId,
+      },
+    });
+    if (!profId) {
+      return c.json({ message: "Bad Request" }, 400);
+    }
+    const professor = await prisma.professor.delete({
+      where: {
+        id: professorId,
+      },
+    });
+    return c.json({ message: "Professor details deleted" }, 200);
+  } catch (e) {
+    console.log(e);
+  }
+});
 
+//Assigning student under the proctorship of a professor
+app.post("/professors/:professorId", async (c) => {
+  const { professorId } = c.req.param();
+  const { studentId } = await c.req.json();
+  try {
+    const profId = await prisma.professor.findUnique({
+      where: {
+        id: professorId,
+      },
+    });
+    if (!profId) {
+      return c.json({ message: "Bad Request" }, 400);
+    }
+    const stuId = await prisma.student.findUnique({
+      where: {
+        id: studentId,
+      },
+    });
+    if (!stuId) {
+      return c.json({ message: "Bad Request" }, 400);
+    }
+    const prof = await prisma.student.update({
+      where: {
+        id: studentId,
+      },
+      data: {
+        proctorId: professorId,
+      },
+    });
+    return c.json({message:"Student added to proctorship"}, 200);
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 serve(app);
 console.log("Server ON!");
