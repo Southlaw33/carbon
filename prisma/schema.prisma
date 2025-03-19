@@ -9,9 +9,27 @@ datasource db {
 
 //Student Table
 model Student {
-  id                String             @id @default(cuid())
-  name              String
-  dateOfBirth       String
-  aadharNumber      String             @unique
+  id           String    @id @default(cuid())
+  name         String
+  dateOfBirth  String
+  aadharNumber String    @unique
+  proctor      Professor @relation(fields: [proctorId], references: [id])
+  proctorId    String
 }
 
+//Professor table
+model Professor {
+  id           String    @id @default(cuid())
+  name         String
+  seniority    Seniority
+  aadharNumber String    @unique
+  Student      Student[]
+}
+
+//Enum for seniority type
+enum Seniority {
+  JUNIOR
+  SENIOR
+  ASSOCIATE
+  HEAD
+}
