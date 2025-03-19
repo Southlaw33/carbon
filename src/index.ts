@@ -138,11 +138,39 @@ app.patch("/students/:studentId", async (c) => {
         proctorId,
       },
     });
-    return c.json(student, 200);
+    return c.json(student, 201);
   } catch (e) {
     console.log(e);
   }
 });
 
+//Update professor details based on professorId
+app.patch("/professors/:professorId", async (c) => {
+  const { professorId } = c.req.param();
+  try {
+    const profId = await prisma.professor.findUnique({
+      where: {
+        id: professorId,
+      },
+    });
+    if (!profId) {
+      return c.json({ message: "Bad Request" }, 400);
+    }
+    const { name, seniority, aadharNumber } = await c.req.json();
+    const professor = await prisma.professor.update({
+      where: {
+        id: professorId,
+      },
+      data: {
+        name,
+        seniority,
+        aadharNumber,
+      },
+    });
+    return c.json(professor, 201);
+  } catch (e) {
+    console.log(e);
+  }
+});
 serve(app);
 console.log("Server ON!");
