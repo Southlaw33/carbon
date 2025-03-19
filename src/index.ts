@@ -174,10 +174,10 @@ app.patch("/professors/:professorId", async (c) => {
 });
 
 //Delete student by his studentId
-app.delete("/students/:studentId", async (c) => {
-  const { studentId } = c.req.param();
-  try {
-    const sid = 
+// app.delete("/students/:studentId", async (c) => {
+//   const { studentId } = c.req.param();
+//   try {
+//     const sid = 
 
 
 
