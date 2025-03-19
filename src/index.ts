@@ -296,5 +296,29 @@ app.post("/students/:studentId/library-membership", async (c) => {
     return c.json({ message: "Internal Server Error" }, 500);
   }
 });
+
+//Retrieving the library-membership deatails of a particular studemt
+app.get("/students/:studentId/library-membership", async (c) => {
+  const { studentId } = c.req.param();
+  try {
+    const sId = await prisma.student.findUnique({
+      where: {
+        id: studentId,
+      },
+    });
+    if (!sId) {
+      return c.json({ message: "Bad Request!" }, 400);
+    }
+    const membership = await prisma.libraryMembership.findMany({
+      where: {
+        studentId: studentId,
+      },
+    });
+    return c.json(membership, 200);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 serve(app);
 console.log("Server ON!");
