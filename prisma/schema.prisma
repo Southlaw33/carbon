@@ -13,8 +13,8 @@ model Student {
   name              String
   dateOfBirth       String
   aadharNumber      String             @unique
-  proctor           Professor          @relation(fields: [proctorId], references: [id], onDelete: Cascade)
-  proctorId         String
+  proctor           Professor?         @relation(fields: [proctorId], references: [id], onDelete: Cascade)
+  proctorId         String?
   LibraryMembership LibraryMembership?
 }
 

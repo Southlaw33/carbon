@@ -42,7 +42,7 @@ app.get("/students/enriched", async (c) => {
 
 //Adding new student record
 app.post("/students", async (c) => {
-  const { name, dateOfBirth, aadharNumber, proctorId } = await c.req.json();
+  const { name, dateOfBirth, aadharNumber } = await c.req.json();
   try {
     const studentAadhar = await prisma.student.findUnique({
       where: {
@@ -58,7 +58,7 @@ app.post("/students", async (c) => {
         name,
         dateOfBirth,
         aadharNumber,
-        proctorId,
+        
       },
     });
     return c.json(student, 201);
@@ -172,5 +172,14 @@ app.patch("/professors/:professorId", async (c) => {
     console.log(e);
   }
 });
+
+//Delete student by his studentId
+app.delete("/students/:studentId", async (c) => {
+  const { studentId } = c.req.param();
+  try {
+    const sid = 
+
+
+
 serve(app);
 console.log("Server ON!");
