@@ -255,7 +255,7 @@ app.post("/professors/:professorId", async (c) => {
 
 //Entering LibraryMembership details of a student
 app.post("/students/:studentId/library-membership", async (c) => {
-  const studentId = c.req.param("studentId");
+  const { studentId } = c.req.param();
 
   try {
     const { issueDate, expiryDate } = await c.req.json();
@@ -275,7 +275,10 @@ app.post("/students/:studentId/library-membership", async (c) => {
     });
 
     if (existingMembership) {
-      return c.json({ message: "Library membership already exists for this student" }, 409);
+      return c.json(
+        { message: "Library membership already exists for this student" },
+        409
+      );
     }
 
     // Create new library membership
