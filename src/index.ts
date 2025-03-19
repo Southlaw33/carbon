@@ -247,11 +247,51 @@ app.post("/professors/:professorId", async (c) => {
         proctorId: professorId,
       },
     });
-    return c.json({message:"Student added to proctorship"}, 200);
+    return c.json({ message: "Student added to proctorship" }, 200);
   } catch (e) {
     console.log(e);
   }
 });
 
+//Entering LibraryMembership details of a student
+app.post("/students/:studentId/library-membership", async (c) => {
+  const studentId = c.req.param("studentId");
+
+  try {
+    const { issueDate, expiryDate } = await c.req.json();
+
+    // Check if student exists
+    const student = await prisma.student.findUnique({
+      where: { id: studentId },
+    });
+
+    if (!student) {
+      return c.json({ message: "Student not found!" }, 404);
+    }
+
+    // Check if the student already has a library membership
+    const existingMembership = await prisma.libraryMembership.findUnique({
+      where: { studentId },
+    });
+
+    if (existingMembership) {
+      return c.json({ message: "Library membership already exists for this student" }, 409);
+    }
+
+    // Create new library membership
+    const membership = await prisma.libraryMembership.create({
+      data: {
+        studentId,
+        issueDate,
+        expiryDate,
+      },
+    });
+
+    return c.json(membership, 201);
+  } catch (e) {
+    console.error("Error creating library membership:", e);
+    return c.json({ message: "Internal Server Error" }, 500);
+  }
+});
 serve(app);
 console.log("Server ON!");
