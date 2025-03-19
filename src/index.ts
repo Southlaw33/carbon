@@ -91,7 +91,58 @@ app.post("/professors", async (c) => {
   }
 });
 
-//
+//Retrieving all students under proctorship of a given professor
+app.get("/professors/:professorId/proctorships", async (c) => {
+  try {
+    const { professorId } = c.req.param();
+    const validProfId = prisma.professor.findUnique({
+      where: {
+        id: professorId,
+      },
+    });
+    if (!validProfId) {
+      return c.json({ message: "Bad Request" }, 400);
+    }
+    const proctorships = await prisma.student.findMany({
+      where: {
+        proctorId: professorId,
+      },
+    });
+    return c.json(proctorships, 200);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+//Update student details based on studentId
+app.patch("/students/:studentId", async (c) => {
+  const { studentId } = c.req.param();
+  try {
+    const sId = await prisma.student.findUnique({
+      where: {
+        id: studentId,
+      },
+    });
+    if (!sId) {
+      return c.json({ message: "Bad Request" }, 400);
+    }
+    const { name, aadharNumber, dateOfBirth, proctorId } = await c.req.json();
+    const student = await prisma.student.update({
+      where: {
+        id: studentId,
+      },
+      data: {
+        name,
+        aadharNumber,
+        dateOfBirth,
+        proctorId,
+      },
+    });
+    return c.json(student, 200);
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 serve(app);
 console.log("Server ON!");
